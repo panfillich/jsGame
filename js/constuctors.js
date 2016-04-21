@@ -37,13 +37,12 @@ GameObject.prototype.destroy = function(){
 
 //Шаблон типа гексагона
 function TypeHex(name,img,style){
-	this.id = TypeHex._global.id++;
-	this.style = TypeHex._global.style + style;
-	this.img = TypeHex._global.folder + '/' + img;
-	this.name = name;
+	this.id 	= TypeHex._global.id++;
+	this.style 	= TypeHex._global.style + style;
+	this.img 	= TypeHex._global.folder + '/' + img;
+	this.name 	= name;
 	TypeHex._global.active.push(this);
 }
-
 
 // Шаблон гексагона
 function Hexagon(x,y,z){
