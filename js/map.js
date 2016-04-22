@@ -24,7 +24,6 @@ var debug_mod = false;
 	
 	
 //-----| ФОРМИРУЕМ CANVAS |-----//
-	
 	//Ширина и высота
 	var map_width  = sell_count_x * sell_size_x;
 	var map_height = sell_count_y * sell_size_y;
