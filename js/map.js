@@ -1,5 +1,5 @@
 ;//Генерируем карту игры
-(function(){
+var go = function(){
 
 //-----| Отладка |------//
 var debug_mod = false;
@@ -64,81 +64,10 @@ var debug_mod = false;
 	}
 	
 	
-//-----| РИСУЕМ ГЕКСАГОН |-----//
-
-	//Задаем типы гексагонов
-	TypeHex = Object.create(null);
-	//Папка с изображениями
-	TypeHex.folder = 'img/hex/'; 
-	//Последний ID
-	TypeHex.id = 0; 
-	//Массив всех типов
-	TypeHex.all = new Array(); 
-	
-	//Получить тип по имени
-	TypeHex.getByName = function(name){
-		var number_hex;
-		TypeHex.all.forEach(function(hex,i,hexs){			
-			if(name === hex.name){
-				number_hex = i;
-			}
-		});
-		return TypeHex.all[number_hex];
-	};
-	
-	//Получить тип по id
-	TypeHex.getById = function(id){
-		return TypeHex.all[id];
-	};
-	
-	//Получить случайный тип по id
-	TypeHex.getRandom = function(){
-		var id = Math.floor(Math.random() * (TypeHex.all.length));
-		return TypeHex.all[id];
-	}
-	
-	//Конструтор создания гексагонов
-	function CreateTypeHex(name,src){		
-		this.img = new Image;
-		this.img.src = TypeHex.folder + src;
-		this.img.onload = (function(){
-			
-		}).bind(this);
-		this.id = TypeHex.id++;
-		this.name = name;
-		this.action = function(){
-			return false;
-		};	
-		TypeHex.all.push(this); 
-	}
-	CreateTypeHex.prototype = Object.create(null)
-	
-	//создаем гексагоны	
-	new CreateTypeHex('red','red.gif');
-	new CreateTypeHex('blue','blue.gif');
-	new CreateTypeHex('fill','fill.gif');
-	new CreateTypeHex('green','green.gif');
-	new CreateTypeHex('yellow','yellow.gif');
-
-	
-	
-	
-	console.log(TypeHex.getRandom());
-	
-	
-	
-	/*var control_load_img = false; 
-	var img = new Image();  // Создание нового объекта изображения
-	img.src = 'img/hex.gif';  // Путь к изображению которое необходимо нанести на холст
-	//img.src = 'data:image/gif;base64,R0lGODlhDAAMAOYAANPe5Pz//4KkutDb4szY3/b+/5u5z/3//3KWrfn//8rk8naasYGkuszY4Mbg8qG+0dzv9tXg5sTg8t/o7vP8/4iqv9ft9NPe5qfD1Mfc56O/0YKlu+Lr8M3Z4JCwxuj2/Of0+eDz9+rw9Z68z8/n8sHe8sbT3Ju6zuDv96nE1Onw9Nbh6cvX39Hq89Hq8u77/srW3tbh54Kku8ba56TD1u37/vL8/vL8/9ft9ebu8+Ps8bzM1Ymsw7XR4Nnj6Yanvsnj8qrI2Or2/NTf5tvl68vY3+r3/HqdtNji6OXt8eDz+dLc477c7bDO3t7n7d7v9s3Z4dbs9N/y98Pd6PX+/8/b4f7//+Hp7tDo8vv//+fu84GjunKWro6uxHqctOfu9P///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAMAAwAAAeEgCJfg4RfWlo5KlpgjI2OOklWBwcBAVmXCQlXHAUFVBkGBjMUNzZOEy81IF2sXUZCH0QrDyhPGzICAkohUj4XHhoQKQsLGDgWUTFIJxUjUy0uWNIkQxE9W9gMDD9BCgpLAEBNXl5H5F40DlUDEkxc71wICDwlDQBQHQ0EBEUsJjswBgQCADs=';
-	
-	*/
-	
-	
 //-----| ПЕРЕМЕЩАЕМ ГЕКСАГОН |-----//	
 
 	//-- инициализация с учётом браузерной совместимости
-	/*window.MyRequestAnimationFrame = (function (callback) {
+	window.MyRequestAnimationFrame = (function (callback) {
 		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
 			function (callback) {
 				window.setTimeout(callback, 1000/60);
@@ -153,7 +82,8 @@ var debug_mod = false;
 	  //Очищаем всю карту
 	  context.clearRect(0,0,map_width,map_height);	 
 	  //Отрисовываем в нужном порядке анимации
-      context.drawImage(img,0*sell_size_x+iterator,0*sell_size_y,sell_size_x*4,sell_size_y*4);
+	  
+      context.drawImage(TypeHex.getRandom().img,sell_size_x+iterator,sell_size_y,sell_size_x*4,sell_size_y*4);
 
 	  //скорость игры
       iterator = iterator + 1*speed;
@@ -164,7 +94,7 @@ var debug_mod = false;
 		});
 		
 	}
-	MyAnimation();*/
+	//MyAnimation();
 	
 //--------| События по клику мышки |-----------------//
 
@@ -244,42 +174,13 @@ function create_sell(x,y){ //координаты гексагона в клет
 
 //CОЗДАЕМ КАРТУ
 var map = create_map_points();
-
-		callback = function(){
-			map.forEach(function(sell,i,map){
-			context.drawImage(TypeHex.getRandom().img,sell.pos_c.x,sell.pos_c.y,sell_size_x*4,sell_size_y*4);
-			});
-			drowGrid();
-			alert('finish');
-		}.bind(window);
-		
-		window.setTimeout(callback, 1000);
-})();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	callback = function(){
+		map.forEach(function(sell,i,map){
+		context.drawImage(TypeHex.getRandom().img,sell.pos_c.x,sell.pos_c.y,sell_size_x*4,sell_size_y*4);
+		});
+		drowGrid();
+		alert('finish');
+	}.bind(window);
+	
+	window.setTimeout(MyAnimation, 1000);
+}
