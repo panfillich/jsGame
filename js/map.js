@@ -1,185 +1,214 @@
 ;//Генерируем карту игры
-var go = function(){
 
-//-----| Отладка |------//
-var debug_mod = false;
+var Game = {
 
+	//--------/ Формируем канвас /-------------------------------------------//
+	'_createCanvas' : function(){
+		var convas = document.createElement('canvas');
 
-//-----| СВОЙСТВА |-----//
+		convas.setAttribute('id', 'map');
+		convas.setAttribute('width', Setting.map.width);
+		convas.setAttribute('height', Setting.map.height);
 
-	//id родителя, в котором рисуем поле
-	var id_fild = 'windows-game';
-	
-	//Кол-во клеток по оси x и y
-	var sell_count_x = 20;
-	var sell_count_y = 20;
-	
-	//высота и ширина клетки
-	var sell_size_x = 24;	
-	var sell_size_y = 20;	
-	
-	//цвет линий сетки
-	var sell_color = '#eee';
+		//рисуем канвас
+		document.getElementById(Setting.id_parent_canvas).appendChild(convas);
 
-	
-	
-//-----| ФОРМИРУЕМ CANVAS |-----//
-	//Ширина и высота
-	var map_width  = sell_count_x * sell_size_x;
-	var map_height = sell_count_y * sell_size_y;
-
-	//Задаем  свойства полю
-	var convas = document.createElement('canvas');	
-	convas.setAttribute('id', 'map');
-	convas.setAttribute('width', map_width);
-	convas.setAttribute('height', map_height);
-	
-	//Создаем поле
-	var parent_fild = document.getElementById(id_fild);
-	parent_fild.appendChild(convas)
-
-	
-//-----| РИСУЕМ КООРДИНАТНУЮ СЕТЬ |-----//
-	
-	var context = convas.getContext("2d");
-	
-	function drowGrid(){
-		//Рисуем вертикальные линии		
-		for (var x = sell_size_x; x <= (map_width-sell_size_x); x += sell_size_x) {
-			context.moveTo(x, 0);
-			context.lineTo(x, map_height);
-		}
-
-		//Рисуем горизонтальные линии
-		for (var y = sell_size_y; y <= (map_height-sell_size_y); y += sell_size_y) {
-			context.moveTo(0, y);
-			context.lineTo(map_width, y);
-		}
-
-		//Это все были «карандашные» методы. На самом деле, на холсте еще ничего не нарисовано, 
-		//нам нужны «чернильные» методы, чтобы сделать рисунок видимым.
-		context.strokeStyle = sell_color;
-		context.stroke();
-	}
-	
-	
-//-----| ПЕРЕМЕЩАЕМ ГЕКСАГОН |-----//	
-
-	//-- инициализация с учётом браузерной совместимости
-	window.MyRequestAnimationFrame = (function (callback) {
-		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-			function (callback) {
-				window.setTimeout(callback, 1000/60);
-			};
-	})();
-
-	//-- старт анимации
-	var iterator = 0;
-	var speed = 0.1;
-	
-	MyAnimation = function () {
-	  //Очищаем всю карту
-	  context.clearRect(0,0,map_width,map_height);	 
-	  //Отрисовываем в нужном порядке анимации
-	  
-      context.drawImage(TypeHex.getRandom().img,sell_size_x+iterator,sell_size_y,sell_size_x*4,sell_size_y*4);
-
-	  //скорость игры
-      iterator = iterator + 1*speed;
-      if ( iterator > map_width) { iterator = 0; }
-		
-		window.MyRequestAnimationFrame(function () {
-			MyAnimation();
+		//навешиваем событие на клик по карте
+		convas.addEventListener('mouseup', function (e) {
+			var mouse_x = e.pageX - e.target.offsetLeft;
+			var mouse_y = e.pageY - e.target.offsetTop;
 		});
-		
-	}
-	//MyAnimation();
-	
-//--------| События по клику мышки |-----------------//
 
-convas.addEventListener('mouseup', function (e) {
-    var mouse_x = e.pageX - e.target.offsetLeft;
-    var mouse_y = e.pageY - e.target.offsetTop;
-	//cобытие по клику мыши
-	//mouse_event(mouse_x,mouse_y);
-});
+		Game.convas  = convas;
+		Game.context = convas.getContext("2d");
+	}, //----------------------------------------------------------------------//
 
 
-//-------| Расчет кол-ва гексагонов исходя из поля |--//
 
-var hex_count_x = ((sell_count_x-1)/3).toString().replace(/\.[1-9]+\d*$/,'');
-var hex_count_y = ((sell_count_y)/4).toString().replace(/\.[1-9]+\d*$/,'');
-
-//Проверка, если карта слишком маленькая
-if(hex_count_x <= 0 || hex_count_y <= 0){
-	alert('Карта сышком маленькая');
-	flag = false;
-}	
+	//--------/ Очищаем стол / удаляем старый конвас /-------------------------//
+	'_deleteCanvas' : function(){
+	}, //----------------------------------------------------------------------//
 
 
-//-------| Получаем массив координат гексагонов |-----//
-function create_map_points(){
-	var map = new Array();
-	var x, y; 
 
-	//Работаем от конвасовской координаты [0;0]
-	//Заполняем сверху - вниз, затем смещаемся на след. столбец
-	for(x = 0; x < hex_count_x; x++){
-		if(!(x%2)){ //полный столбец гексагонов
-			for(y = 0; y < hex_count_y; y++){	
-				map.push(create_sell(x*3,y*4));
+
+	//--------/ Формируем карту, координаты позиций гексагонов /------//
+	'_createMap' : function(){
+
+		//Получаем массив координат гексагонов
+		var map = new Array();
+		var x, y, count_y, hex_id = 0;
+
+		//Размер гексагона в клетках
+		var hex_sell_x = Setting.hex.sell_x;
+		var hex_sell_y = Setting.hex.sell_y;
+
+		//Размер гексагона
+		var hex_width = Setting.hex.width;
+		var hex_height = Setting.hex.height;
+
+		//Размеры клетки
+		var sell_width  = Setting.sell.width;
+		var sell_height = Setting.sell.height;
+
+		//Кол-во гексагонов по осям
+		var hex_count_x = Setting.hex.count_x;
+		var hex_count_y = Setting.hex.count_y;
+
+		//Последние гексагоны каждого столбца и кол-во гексагонов сверху
+		map.last_line = new Array();
+
+		//Работаем от конвасовской координаты [0;0]
+		//Заполняем сверху - вниз, затем смещаемся на след. столбец
+		for(x = 0; x <  hex_count_x; x++){
+			if(!(x%2)){ //полный столбец гексагонов
+				count_y =  hex_count_y;
+				for(y = 0; y  < count_y; y++){
+					map[hex_id] = (create_sell(x*hex_sell_x*3/4,y*hex_sell_y,hex_id));
+					if(y === count_y-1) {
+						map.last_line.push({'id': hex_id, 'count': count_y, 'gener' : false});
+					}
+					hex_id++;
+				}
+			} else { //смещенный столбец гексагонов
+				count_y =  hex_count_y - 1;
+				for(y = 0; y < count_y; y++){
+					map[hex_id] = (create_sell(x*hex_sell_x*3/4,y*hex_sell_y+hex_sell_y/2,hex_id));
+					if(y === count_y-1) {
+						map.last_line.push({'id': hex_id, 'count': count_y, 'gener' : false});
+					}
+					hex_id++;
+				}
 			}
-		} else { //смещенный столбец гексагонов
-			for(y = 0; y < (hex_count_y-1); y++){
-				map.push(create_sell(x*3,y*4+2));
-			}		
 		}
-	}
-	return map;
+
+		//Коллекция свойств клетки
+		function create_sell(x,y,id){ //координаты гексагона в клетках (Например первый гесагон всегда [0:0])
+			var hex = {
+				//id клетки
+				'id' : id,
+
+				//позиции в координатах canvas
+				'pos_canvas' : {
+					//Координаты вершины
+					'x' : x*sell_width,
+					'y' : y*sell_height,
+					//Координата центра
+					'mid_x' : sell_width*(x + hex_sell_x/2),
+					'mid_y' : sell_width*(y + hex_sell_y/2),
+				},
+
+				//позиции в клетках
+				'pos_sell' : {
+					//Координаты вершины
+					'x' : x,
+					'y' : y,
+					//Координата центра
+					'mid_x' : (x + hex_sell_x/2),
+					'mid_y' : (y + hex_sell_y/2),
+				},
+
+				'hex' : null
+			};
+			return hex;
+		}
+
+		//Перерасчёт карты
+		map.recalculation = function(){
+			var map = Game.map;
+
+			//Проверка на пустоту
+			map.last_line.forEach(function(last_hex){
+				var i;
+				var count_y = last_hex.count;
+				var id = last_hex.id;
+
+				//Двигаемся снизу вверх по последней строке
+				for(i = id; i > (id - count_y); i--) {
+					//Если клетка пуста
+					if(map[i].status === 'empty'){
+
+						break;
+					}
+				}
+			});
+
+			Game.map = map;
+		};
+
+		Game.map = map;
+	},//---------------------------------------------------------------------------//
+
+
+	//------/ Реализация покадровой анимации /-------------------------------------//
+	'_startAnimation' : function() {
+		//-- инициализация с учётом браузерной совместимости
+		window.MyRequestAnimationFrame = (function (callback) {
+			return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+				function (callback) {
+					window.setTimeout(callback, 1000 / 60);
+				};
+		})();
+
+		//-- старт анимации
+		var iterator = 0;
+
+		var MyAnimation = function () {
+			//Очищаем всю карту
+			Game.context.clearRect(0, 0, Setting.map.width, Setting.map.height);
+			//Отрисовываем в нужном порядке анимации
+
+			Game.map.forEach(function(sell,i,map){
+				Game.context.drawImage(TypeHex.getById(0).img,sell.pos_canvas.x,sell.pos_canvas.y,Setting.hex.width,Setting.hex.height);
+			});
+
+			Game.context.drawImage(TypeHex.getById(0).img, iterator, iterator, Setting.hex.width-iterator, Setting.hex.height-iterator);
+
+			//Motion.drowGrid();
+
+			//скорость игры
+			iterator = iterator + Setting.speed;
+			if (iterator > Setting.map.width) {
+				iterator = 0;
+			}
+
+			window.MyRequestAnimationFrame(function () {
+				MyAnimation()
+			});
+
+		}.bind(Game);
+		MyAnimation();
+	},//---------------------------------------------------------------------------//
+
+
+	//Начинаем новую игру
+	'start' : function(){
+		//Очищаем стол / удаляем старый конвас
+		Game._deleteCanvas();
+
+		//Делаем перерасчет настроек
+		Setting.recalculation();
+
+		//Формируем новый канвас + событие клика на карту
+		Game._createCanvas();
+
+		//Формируем шаблон карты
+		Game._createMap();
+
+		//Запускаем покадровую анимацию
+		Game._startAnimation();
+	},
+
+	//Пауза
+	'pause' : function(){
+		Game.speed_before_pause = Setting.speed;
+		Setting.speed = 0;
+	},
+
+	//Убрать паузу
+	'unpause' : function(){
+		Setting.speed = Game.speed_before_pause;
+	},
+
 }
 
-//Коллекция свойств клетки
-function create_sell(x,y){ //координаты гексагона в клетках (Например первый гесагон всегда [0:0])
-	var sell_time = Object.create(null);
-	
-	//координаты финальных позиций гексагонов в клетках
-	sell_time.pos_s = Object.create(null);
-	sell_time.pos_s.x = x;
-	sell_time.pos_s.y = y;
-	
-	//координаты гексагонов в координатах canvas
-	sell_time.pos_c = Object.create(null);
-	sell_time.pos_c.x = x*sell_size_x;
-	sell_time.pos_c.y = y*sell_size_y;
-	
-	//координаты центра в клетках
-	sell_time.pos_mid_s = Object.create(null);
-	sell_time.pos_mid_s.x = x+2;
-	sell_time.pos_mid_s.y = y+2;
-	
-	//координаты центра в координатах canvas
-	sell_time.pos_mid_c = Object.create(null);
-	sell_time.pos_mid_c.x = (x+2)*sell_size_x;
-	sell_time.pos_mid_c.y = (y+2)*sell_size_y;
-	
-	sell_time.status = 'empty';
-						// 	1. 	empty 	- с клеткой ничеге не происходит, клетка пуста
-						// 	2. 			- клетка заполняется, к ней уже выехал гексагон
-						//  3.			- клетка заполняется, ожидает формирования гексагона
-						// 	4. 			- в клетке гексагон, он кликабелен
-						//	5.			- гексагоны меняются местами
-	return 	sell_time;				
-}
-
-//CОЗДАЕМ КАРТУ
-var map = create_map_points();
-	callback = function(){
-		map.forEach(function(sell,i,map){
-		context.drawImage(TypeHex.getRandom().img,sell.pos_c.x,sell.pos_c.y,sell_size_x*4,sell_size_y*4);
-		});
-		drowGrid();
-		alert('finish');
-	}.bind(window);
-	
-	window.setTimeout(MyAnimation, 1000);
-}

@@ -41,7 +41,7 @@ window.onload = function(){
 
 Loading.check = function(){
 	if(Loading.window.finish && Loading.type_hex.finish){
-		go();
+		Game.start();
 	}
 }
 
