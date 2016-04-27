@@ -28,25 +28,36 @@ function Setting(id_game,id_rezult,id_setting){
 	this.speed_before_pause = this.speed;
 }
 
-function Game(id_game){
-	//Глобальные настройки
-	this._setting = new Setting;
+function gameObject(img,x,y){
+	this.img = img;
+
+	//Позиция обьекта
+	this.pos = {'x':x, 'y':y};
+
+	//Что происходит с обьектом
+	this.animation = null;
 }
 
-//Получить настройки
-Game.prototype.getSetting = function() {
-	return this._setting;
-};
+//Анимация и движения
+function Animation(setting){
+	this.setting = setting;
+	this.setting.speed = 10;
 
-Game.prototype.setSetting = function(setting) {
-	this.setting = this._setting;
-};
 
-Game.prototype.Animation = function(setting) {
-	var setting = this.getSetting();
-	setting.speed = 0;
-	this.setSetting(setting);
-};
+	this.move_to_point = function(gameObject,point){
+		var speed = this.setting.speed;
+	}
+}
+
+
+
+
+function Game(id_game){
+	//Глобальные настройки
+	this.setting = new Setting(id_game);
+	new Animation(this.setting);
+}
+
 
 
 var game_1 = new Game('game1');
