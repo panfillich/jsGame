@@ -132,9 +132,9 @@ function Hex(id_hener,id_map_hex,Game){
 	}
 	
 	//Отрисовываем
-	this.animation.drow() = function(){
+	/*this.animation.drow() = function(){
 		Game.context.drawImage(this.type_hex.img,this.pos_canv.x,this.pos_canv.y,Setting.hex.width,Setting.hex.height);
-	}
+	}*/
 	
 	//Задаем точку назначения
 	this.animation.setPoint_pxls = function(x,y,type){  
