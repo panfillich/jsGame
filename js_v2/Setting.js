@@ -1,25 +1,45 @@
 ;//Глобальные настройки
 function Setting(id_game,id_rezult,id_setting){
+
 	//id родительского класса, где генерируется canvas
 	this.id_game = id_game;
 	
+	//Вкл./выкл. лог
+	this.log = true;
+	
 	//Карта	
 	this.map = { 	
+		//Хранилище карты с логикой
+		'store' : {},
 		//Размеры 
-		'size' : {'x' : 400,'y' : 400}
+		'size' : {'x' : 420,'y' : 420}
 	};		
 	
 	//Гексагоны	
 	this.hex = { 
 		//Размеры
-		'size' : {'x'  : 40,'y'  : 40}		
-	}
+		'size' : {'x'  : 60,'y'  : 60}		
+	}	
 	
 	//Кол-во гексагонов по осям
 	this.hex.count = {
-		'x'  : (this.map.size.x - this.hex.size.x / 4) / (3 * this.hex.size.x / 4).toString().replace(/\.[1-9]+\d*$/,''),
-		'y'  : (this.map.size.y / this.hex.size.y).toString().replace(/\.[1-9]+\d*$/,'')
+		'x'  : 1*((this.map.size.x - this.hex.size.x / 4) / (3 * this.hex.size.x / 4)).toString().replace(/\.[1-9]+\d*$/,''),
+		'y'  : 1*(this.map.size.y / this.hex.size.y).toString().replace(/\.[1-9]+\d*$/,'')
 	}
+	
+	//Координатная сеть
+	this.grid = {
+		//Рисовать/нерисовать сеть
+		'view' : true,
+		
+		//Цвет линий
+		'color' : 'black',
+		
+		//Клетка / ячейка сети
+		'sell' : {
+			'size' : {'x' : 15,'y' : 15}
+		}
+	};
 	
 	//Глобальный коэфициент скорости игры
 	this.speed = 1;
@@ -30,7 +50,7 @@ function Setting(id_game,id_rezult,id_setting){
 	//Папка со всеми картинками
 	this.image_folder = 'img';
 	
-	//Папка с гексагонами
+	//Папка с картинками гексагонов
 	this.hex_image_folder = 'hex';
 	
 	//Хранилище картинок
@@ -56,4 +76,5 @@ function Setting(id_game,id_rezult,id_setting){
 		 'type' 	 : this.hex_image_folder,
 		 'file_name' : 'yellow.gif'}, 
 	];
+	
 }//-------------------------------------------------//
