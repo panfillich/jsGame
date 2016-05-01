@@ -12,7 +12,7 @@ function Setting(id_game,id_rezult,id_setting){
 		//Хранилище карты с логикой
 		'store' : {},
 		//Размеры 
-		'size' : {'x' : 420,'y' : 420}
+		'size' : {'x' : 180,'y' : 180}
 	};		
 	
 	//Гексагоны	
