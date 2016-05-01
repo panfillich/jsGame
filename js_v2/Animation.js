@@ -3,7 +3,7 @@ function Animation(setting){
 	this.setting = setting;
 }
 //Обьект отрисовывается
-Animation.drow = function(GameObject){
+Animation.prototype.drow = function(GameObject){
 	var context = this.setting.canvas.context;
 	var object 	= GameObject;
 	var img 	= object.img;
