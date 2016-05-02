@@ -19,16 +19,20 @@
 		}
 		
 		//Формируем карту + логику игры
-		CreateMapLogic(setting);
+		this.map = new Map(setting);
 		
 		//setting.context.drawImage(setting.image_store[0].img, 0, 0, setting.hex.size.x, setting.hex.size.y );
 		
-		setting.map.store.hex.forEach(function(point,i,map){
-			setting.context.drawImage(setting.image_store[0].img, point.pos.drow_point.x, point.pos.drow_point.y, setting.hex.size.x, setting.hex.size.y );
-		});
+		/*this.map.nodes.forEach(function(node,i,nodes){
+			setting.context.drawImage(setting.image_store[0].img, node.pos.drow_point.x, node.pos.drow_point.y, setting.hex.size.x, setting.hex.size.y );
+		});*/
+		
+		this.logic = new Logic(this.setting, this.map);
+		this.logic.start();
+		FrameRendering();
 		
 	}).bind(this));	
 }
 
 var game_1 = new Game('game_1');
-//var game_2 = new Game('game_2');
+var game_2 = new Game('game_2');

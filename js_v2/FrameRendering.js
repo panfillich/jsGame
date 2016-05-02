@@ -1,6 +1,9 @@
+//Массив анимация, для каждой игры свой ключ
+var motion_callback = new Array();
+
 //Покадровая анимация
-function FrameRendering(motion_callback){
-	function Rendering(motion_callback){
+function FrameRendering(){
+	function Rendering(){
 		window.MyRequestAnimationFrame = (function (callback) {
 			return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
 				function (callback) {
@@ -8,11 +11,13 @@ function FrameRendering(motion_callback){
 				};
 		})();
 		
-		motion_callback();
+		motion_callback.forEach(function(callback){
+			callback();
+		});
 		
 		window.MyRequestAnimationFrame(function () {
-			Rendering(motion_callback)
+			Rendering()
 		});
 	};
-	Rendering(motion_callback);
+	Rendering();
 }
