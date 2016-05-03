@@ -29,6 +29,7 @@
 		
 		this.logic = new Logic(this.setting, this.map);		
 		
+		//Массив всех игр
 		games.push(this);
 				
 	}).bind(this));	
