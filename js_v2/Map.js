@@ -13,10 +13,6 @@ function Map(setting){
 	//По сути это узлы самых нижних гексагонов
 	this.nodes_last = new Array;
 	
-	//Граница, после которой происходит генерация нового элемента 
-	//<0, если мы не хотим видеть генерируемые гексагоны
-	this.nodes_gen.border = 0;
-	
 	//Задаём форму карты
 	this.setFormMap('rectang');
 	
@@ -72,6 +68,7 @@ Map.prototype.setFormMap = function(type){
 	var pos_mid_x, pos_mid_y;	//Позиции центра
 	var	id = 1; 				//Id узла
 	var id_gen = 1;				//ID узла-генератора
+	var border;					//граница, после которой происходит генерация
 	
 	switch (type) {
 		//----------------------------------------------------------------------------------//
@@ -87,9 +84,11 @@ Map.prototype.setFormMap = function(type){
 				if(x%2){ 
 					y 		= 	hex_count_y-2;	
 					pos_y 	=  -(3/2)*hex_size_y;
+					border  =  -(1/2)* hex_size_y;
 				} else { 
 					y = hex_count_y-1;	
 					pos_y 	=   -hex_size_y;
+					border	=    0;
 				}	
 				pos_x 		= (3/4)*x*hex_size_x;
 				pos_mid_x 	= pos_x + hex_size_x/2;
@@ -97,7 +96,7 @@ Map.prototype.setFormMap = function(type){
 				
 				//Добавляем узел генерации конкретного столбца
 				nodes_gen.push(
-					new GenNode(id_gen, pos_x, pos_y, pos_mid_x, pos_mid_y)
+					new GenNode(id_gen, pos_x, pos_y, pos_mid_x, pos_mid_y, border)
 				); 
 				
 				//Добавляем ID последнего узла и кол-во гексагонов сверху
@@ -234,16 +233,36 @@ function UsualNode(id, x, y, mid_x, mid_y, id_gen){
 	//Связан ли с гексагоном
 	this.is_hex = false;
 	
+	//Находится ли гексагон в узле
+	this.is_hex_in_node = false;
+	
 	//Гексагон, связанный с этой точкой
 	this.hex = new Object;
+	
+	//Состояние гексагона
+	this.state_hex = 'unstate';
+		//unstate 		 состояние, когда нет гексагона, связанного с узлом
+		//move_to_on_map движется к узлу на карте
+		//move_to_on_gen движется к узлу в генераторе
+		//drop			 уничтожается гексагон
+		//change_true    меняется вхолостую
+		//change_false	 меняется
 }
 
 
 //Узел - генератор
 //Обычный узел на карте
-function GenNode(id, x, y, mid_x, mid_y){
+function GenNode(id, x, y, mid_x, mid_y, border){
 	Node.apply(this, arguments);
 
-	//Cвободен ли узел
-	this.is_empry = true;
+	//Cвободен ли узел - генератор
+	this.is_empty = true;
+	
+	//Граница (по y), после которой происходит генерация нового элемента 
+	//<0, если мы не хотим видеть генерируемые гексагоны
+	if(border > ){ 
+		border = 0; 
+	}
+	
+	this.border = border;
 }
