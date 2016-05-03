@@ -27,11 +27,14 @@
 			setting.context.drawImage(setting.image_store[0].img, node.pos.drow_point.x, node.pos.drow_point.y, setting.hex.size.x, setting.hex.size.y );
 		});*/
 		
-		this.logic = new Logic(this.setting, this.map);
-		this.logic.start();
-		FrameRendering();
+		this.logic = new Logic(this.setting, this.map);		
 		
+		games.push(this);
+				
 	}).bind(this));	
+}
+Game.prototype.animation = function(){
+	this.logic.animation();
 }
 
 var game_1 = new Game('game_1');
