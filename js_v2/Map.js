@@ -90,9 +90,11 @@ Map.prototype.setFormMap = function(type){
 					pos_y 	=   -hex_size_y;
 					border	=    0;
 				}	
+						
 				pos_x 		= (3/4)*x*hex_size_x;
 				pos_mid_x 	= pos_x + hex_size_x/2;
 				pos_mid_y 	= pos_y + hex_size_y/2;
+				
 				
 				//Добавляем узел генерации конкретного столбца
 				nodes_gen.push(
@@ -245,8 +247,12 @@ function UsualNode(id, x, y, mid_x, mid_y, id_gen){
 		//move_to_on_map движется к узлу на карте
 		//move_to_on_gen движется к узлу в генераторе
 		//drop			 уничтожается гексагон
-		//change_true    меняется вхолостую
-		//change_false	 меняется
+		//change_false   меняется вхолостую
+		//change_true	 меняется
+		//state_in_node	 стоит в узле
+	
+	//К какой ноде движется
+	this.id_node_move_to = 0;
 }
 
 
@@ -260,7 +266,7 @@ function GenNode(id, x, y, mid_x, mid_y, border){
 	
 	//Граница (по y), после которой происходит генерация нового элемента 
 	//<0, если мы не хотим видеть генерируемые гексагоны
-	if(border > ){ 
+	if(border > 0){ 
 		border = 0; 
 	}
 	
