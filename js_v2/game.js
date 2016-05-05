@@ -39,4 +39,4 @@ Game.prototype.animation = function(){
 }
 
 var game_1 = new Game('game_1');
-var game_2 = new Game('game_2');
+//var game_2 = new Game('game_2');
