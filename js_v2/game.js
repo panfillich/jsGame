@@ -18,16 +18,14 @@
 			DrowGrid(setting);
 		}
 		
-		//Формируем карту + логику игры
-		this.map = new Map(setting);
+		//Формируем карту 
+		this.map	= new Map(setting);
+		var	map		= this.map; 
 		
-		//setting.context.drawImage(setting.image_store[0].img, 0, 0, setting.hex.size.x, setting.hex.size.y );
-		
-		/*this.map.nodes.forEach(function(node,i,nodes){
-			setting.context.drawImage(setting.image_store[0].img, node.pos.drow_point.x, node.pos.drow_point.y, setting.hex.size.x, setting.hex.size.y );
-		});*/
-		
-		this.logic = new Logic(this.setting, this.map);		
+		//Формируем логику работы карты
+		this.logic	= new Logic(setting, map);	
+		//Формируем логику работы с мышью
+		new	Mous(setting, map);
 		
 		//Массив всех игр
 		games.push(this);
