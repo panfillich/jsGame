@@ -4,23 +4,23 @@ var Game = {
 
 	//--------/ Формируем канвас /-------------------------------------------//
 	'_createCanvas' : function(){
-		var convas = document.createElement('canvas');
+		var canvas = document.createElement('canvas');
 
-		convas.setAttribute('id', 'map');
-		convas.setAttribute('width', Setting.map.width);
-		convas.setAttribute('height', Setting.map.height);
+		canvas.setAttribute('id', 'map');
+		canvas.setAttribute('width', Setting.map.width);
+		canvas.setAttribute('height', Setting.map.height);
 
 		//рисуем канвас
-		document.getElementById(Setting.id_parent_canvas).appendChild(convas);
+		document.getElementById(Setting.id_parent_canvas).appendChild(canvas);
 
 		//навешиваем событие на клик по карте
-		convas.addEventListener('mouseup', function (e) {
+		canvas.addEventListener('mouseup', function (e) {
 			var mouse_x = e.pageX - e.target.offsetLeft;
 			var mouse_y = e.pageY - e.target.offsetTop;
 		});
 
-		Game.convas  = convas;
-		Game.context = convas.getContext("2d");
+		Game.canvas  = canvas;
+		Game.context = canvas.getContext("2d");
 	}, //----------------------------------------------------------------------//
 
 

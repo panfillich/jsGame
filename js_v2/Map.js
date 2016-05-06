@@ -22,7 +22,7 @@ function Map(setting){
 }
 
 
-//Получить узел на карте
+//Получить узел на карте по ID
 //id 	- уникальный идентификатор ноды
 //type 	- тип узла:
 //		"usual" узел карты (по умолчанию);
@@ -43,6 +43,32 @@ Map.prototype.getNodeById = function(id, type){
 	}	
 	return false;
 }
+
+//Получить узел на карте по координатам x, y
+//находим ближайший в радиусе = ширина/длинна гексагона * 2
+Map.prototype.getNodeByPos = function(x,y){
+	//Узлы
+	var nodes = this.nodes;
+	//Размер гексагона
+	var hex_size_x  = this._setting.hex.size.x;
+	var hex_size_y  = this._setting.hex.size.y;	
+	
+	//Наиболее близкий узел
+	var node_search = false;
+	//Расстояние
+	var distance = MyMath.getDistanceBetweenTwoPoints(hex_size_x/2,hex_size_y/2,0,0);; 
+	
+	nodes.forEach(function(node){
+		var mid_x = node.pos.mid.x;
+		var mid_y = node.pos.mid.y;
+		var this_node_distance = MyMath.getDistanceBetweenTwoPoints(x,y,mid_x,mid_y);
+		if(this_node_distance <= distance){
+			node_search = node;
+			distance = this_node_distance;
+		}				
+	});
+	return node_search;
+} 
 
 //Задаем форму карты с помощью узлов
 //type 	- тип карты:
@@ -69,6 +95,7 @@ Map.prototype.setFormMap = function(type){
 	var	id = 1; 				//Id узла
 	var id_gen = 1;				//ID узла-генератора
 	var border;					//граница, после которой происходит генерация
+	var rand;					//случайный множитель (для границы)
 	
 	switch (type) {
 		//----------------------------------------------------------------------------------//
@@ -82,15 +109,19 @@ Map.prototype.setFormMap = function(type){
 			for(x = 0; x <  hex_count_x; x++){
 				//массив координат самых нижних позиций y для каждого x		
 				if(x%2){ 
-					y 		= 	hex_count_y-2;	
-					pos_y 	=  -(3/2)*hex_size_y;
-					border  =  -(1/2)* hex_size_y;
+					y 		= 	hex_count_y-2;
+					
+					//pos_y 	=  -(3/2)*hex_size_y;
+					//border  =  -(1/2)* hex_size_y;
 				} else { 
 					y = hex_count_y-1;	
-					pos_y 	=   -hex_size_y;
-					border	=    0;
+					//pos_y 	=   -hex_size_y;
+					//border	=    0;
 				}	
-						
+				
+				pos_y  =  - hex_size_y * Math.random() * 3;
+				border =  0;
+				
 				pos_x 		= (3/4)*x*hex_size_x;
 				pos_mid_x 	= pos_x + hex_size_x/2;
 				pos_mid_y 	= pos_y + hex_size_y/2;
@@ -232,27 +263,20 @@ function UsualNode(id, x, y, mid_x, mid_y, id_gen){
 	//(top) -> (right-top) -> (right-down) -> (top) -> (left-down) -> (left-down)
 	this.neighbors = new Array;
 	
-	//Связан ли с гексагоном
-	this.is_hex = false;
-	
-	//Находится ли гексагон в узле
-	this.is_hex_in_node = false;
-	
 	//Гексагон, связанный с этой точкой
-	this.hex = new Object;
+	this.hex = false;
 	
 	//Состояние гексагона
 	this.state_hex = 'unstate';
 		//unstate 		 состояние, когда нет гексагона, связанного с узлом
-		//move_to_on_map движется к узлу на карте
-		//move_to_on_gen движется к узлу в генераторе
+		//move_down движется к узлу на карте
+		//move_down_in_gen движется к узлу в генераторе
 		//drop			 уничтожается гексагон
-		//change_false   меняется вхолостую
-		//change_true	 меняется
+		//change   		 меняется
 		//state_in_node	 стоит в узле
 	
-	//К какой ноде движется
-	this.id_node_move_to = 0;
+	//Детали конкретного движения
+	this.details = false;
 }
 
 

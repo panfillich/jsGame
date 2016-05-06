@@ -23,7 +23,7 @@ function HexGenerator(id,count,Game){
 		'mid_y' : (Game.map[id].pos_sell.y - (count+2)*Setting.hex.sell_y) + Setting.hex.sell_y/2
 	};
 	//В координатах canvas
-	this.pos_convas = {
+	this.pos_canvas = {
 		//Координаты вершины
 		'x' : this.pos_sell.x * Setting.sell.width,
 		'y' : this.pos_sell.x * Setting.sell.height,
@@ -45,8 +45,8 @@ function Hex(id_hener,id_map_hex,Game){
 	this.status = 'gener';
 		
     this.pos_canv = {
-		'x' : HexGenerator.arr[id_hener].pos_convas.x,
-		'y' : HexGenerator.arr[id_hener].pos_convas.y
+		'x' : HexGenerator.arr[id_hener].pos_canvas.x,
+		'y' : HexGenerator.arr[id_hener].pos_canvas.y
 	};
 	
 	this.pos_sell = {
