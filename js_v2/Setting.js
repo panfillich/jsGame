@@ -7,20 +7,29 @@ function Setting(id_game,id_rezult,id_setting){
 	//Вкл./выкл. лог
 	this.log = true;
 	
+	//Кол-во n в ряде
+	this.count_n_row = 3;
+	
 	//Карта	
 	this.map = { 	
 		//Хранилище карты с логикой
 		'store' : {},
 		//Размеры 
-		'size' : {'x' : 800,'y' : 800}
+		'size' : {'x' : 300,'y' : 300}
 	};		
 	
 	//Гексагоны	
 	this.hex = { 
 		//Размеры
-		'size' : {'x'  : 100,'y'  : 100},
-		'speed' : 25
+		'size' : {'x'  : 60,'y'  : 60},
+		//Скорость
+		'speed' : 11,
+		//Скорость исчезания в частях по диагонали
+		'speed_drop' : 1/30
 	}	
+	//Исчезание по осям x,y
+	this.hex.speed_drop_y = this.hex.size.y * this.hex.speed_drop;
+	this.hex.speed_drop_x = this.hex.size.x * this.hex.speed_drop;
 	
 	//Кол-во гексагонов по осям
 	this.hex.count = {
