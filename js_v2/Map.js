@@ -8,7 +8,7 @@ function Map(setting){
 	//Массив Узлов генерации
 	this.nodes_gen = new Array;
 	
-	//Массив Узлов, с которых начинается обход узлов до генераторов
+	// Узлов, с которых начинается обход узлов до генераторов
 	//и кол-во гексагонов между ними
 	//По сути это узлы самых нижних гексагонов
 	this.nodes_last = new Array;
@@ -17,7 +17,7 @@ function Map(setting){
 	this.setFormMap('rectang');
 	
 	//Находим и задаём Id соседей
-	this.setIdNeighbors();
+	this.setNeighbors();
 	
 }
 
@@ -89,13 +89,14 @@ Map.prototype.setFormMap = function(type){
 	var hex_count_x = this._setting.hex.count.x;
 	var hex_count_y = this._setting.hex.count.y;
 	
-	var x,y; 					//Позиции В ГЕКСАГОНАХ!
+	var x,y,last_y;				//Позиции В ГЕКСАГОНАХ!
 	var pos_x, pos_y;			//Позиции верхнего правого угла
 	var pos_mid_x, pos_mid_y;	//Позиции центра
 	var	id = 1; 				//Id узла
 	var id_gen = 1;				//ID узла-генератора
 	var border;					//граница, после которой происходит генерация
 	var rand;					//случайный множитель (для границы)
+	var node;					//узел
 	
 	switch (type) {
 		//----------------------------------------------------------------------------------//
@@ -109,18 +110,13 @@ Map.prototype.setFormMap = function(type){
 			for(x = 0; x <  hex_count_x; x++){
 				//массив координат самых нижних позиций y для каждого x		
 				if(x%2){ 
-					y 		= 	hex_count_y-2;
-					
-					//pos_y 	=  -(3/2)*hex_size_y;
-					//border  =  -(1/2)* hex_size_y;
+					last_y = y = hex_count_y-2;
 				} else { 
-					y = hex_count_y-1;	
-					//pos_y 	=   -hex_size_y;
-					//border	=    0;
+					last_y = y = hex_count_y-1;	
 				}	
 				
-				pos_y  =  - hex_size_y * Math.random() * 3;
-				border =  0;
+				border = - 0.5 * hex_size_y;
+				pos_y  = border - hex_size_y *(1 + Math.random() * 2);
 				
 				pos_x 		= (3/4)*x*hex_size_x;
 				pos_mid_x 	= pos_x + hex_size_x/2;
@@ -132,8 +128,6 @@ Map.prototype.setFormMap = function(type){
 					new GenNode(id_gen, pos_x, pos_y, pos_mid_x, pos_mid_y, border)
 				); 
 				
-				//Добавляем ID последнего узла и кол-во гексагонов сверху
-				nodes_last.push({'id' : id, 'count_hex' : y+1});	
 				
 				do{ 
 					pos_x = x * 3*(hex_size_x/4);
@@ -147,10 +141,17 @@ Map.prototype.setFormMap = function(type){
 					pos_mid_x = pos_x + hex_size_x/2;
 					pos_mid_y = pos_y + hex_size_y/2;
 				
-					//Добавляем узел
-					nodes.push(
-						new UsualNode(id, pos_x, pos_y, pos_mid_x, pos_mid_y, id_gen)
-					); id++; y--;
+					
+					//Добавляем узел					
+					node = new UsualNode(id, pos_x, pos_y, pos_mid_x, pos_mid_y, id_gen);
+					nodes.push(node); 
+					
+					//Добавляем последний узелж
+					if(y === last_y){
+						nodes_last.push(node);
+					}
+					
+					id++; y--;
 				} while (y >= 0);
 				
 				id_gen++;
@@ -163,7 +164,7 @@ Map.prototype.setFormMap = function(type){
 //Найти id соседа по координатам центра соседа
 //mid_x			- примерная координа центра x соседа
 //mid_y			- примерная координа центра y соседа
-Map.prototype.searchIdNeighbor = function(mid_x, mid_y){	
+Map.prototype.searchNeighbor = function(mid_x, mid_y){	
 	var nodes		 = this.nodes;
 	var hex_size_x 	 = this._setting.hex.size.x;
 	var hex_size_y	 = this._setting.hex.size.y;
@@ -177,17 +178,18 @@ Map.prototype.searchIdNeighbor = function(mid_x, mid_y){
 	var border_y_min = mid_y - hex_size_y/2; 
 	
 	//Находим ID соседа
-	nodes.forEach(function(node, i, nodes){
+	for(var i = 0; i < nodes.length; i++ ){
+		var node = nodes[i];	
 		if(node.pos.mid.x < border_x_max && node.pos.mid.x > border_x_min && node.pos.mid.y < border_y_max 	&& node.pos.mid.y > border_y_min){			
-			id = node.id;		
-		}		
-	});
+			return node;		
+		}
+	}
 	
-	return id;
+	return false;
 }
 
 //Получаем ID соседних узлов или 0, если соседей нет
-Map.prototype.setIdNeighbors = function (){ 
+Map.prototype.setNeighbors = function (){ 
 	var that 		 = this;
 	var nodes		 = this.nodes;
 	var hex_size_x 	 = this._setting.hex.size.x;
@@ -228,7 +230,7 @@ Map.prototype.setIdNeighbors = function (){
 		);
 
 		neighbors.forEach(function(neighbor, i){
-			node.neighbors[i]  = that.searchIdNeighbor(neighbor.mid_x, neighbor.mid_y);
+			node.neighbors[i]  = that.searchNeighbor(neighbor.mid_x, neighbor.mid_y);
 		});
 	});
 }
@@ -277,6 +279,9 @@ function UsualNode(id, x, y, mid_x, mid_y, id_gen){
 	
 	//Детали конкретного движения
 	this.details = false;
+	
+	//Кол-во n-рядов
+	this.count_n_row = 0;
 }
 
 
@@ -288,11 +293,6 @@ function GenNode(id, x, y, mid_x, mid_y, border){
 	//Cвободен ли узел - генератор
 	this.is_empty = true;
 	
-	//Граница (по y), после которой происходит генерация нового элемента 
-	//<0, если мы не хотим видеть генерируемые гексагоны
-	if(border > 0){ 
-		border = 0; 
-	}
-	
+	//Граница, после прохождения которой генерируется новый гексагон
 	this.border = border;
 }

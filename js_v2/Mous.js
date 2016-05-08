@@ -1,6 +1,7 @@
-function Mous(setting, map){
+function Mous(setting, map, logic){
 	this._setting 	= setting;
 	this._map 		= map;
+	//this._logic		= logic;
 	this.addEvent();
 }
 
@@ -22,23 +23,23 @@ Mous.prototype.addEvent = function(){
 		var node = map.getNodeByPos(mouse_x, mouse_y);
 		
 		if(node){
-			if(node.state_hex === 'state_in_node'){
+			node.state_hex = 'drop';
+			
+			/*if(node.state_hex === 'state_in_node'){
 				this.down_node = node;
 				this.pos_before_x = mouse_x;
-				this.pos_before_y = mouse_y;
-				/*node.hex = false;
-				node.state_hex = 'unstate';*/
-			}
+				this.pos_before_y = mouse_y;				
+			}*/
 		}
 		
 	}.bind(this));
 	
+	
 	//навешиваем событие на отжатие кнопки
 	canvas.addEventListener('mouseup', function (e) {
 		if(this.down_node !== false){
-			this.down_node.state_hex = "move_down";
-			this.down_node = false;
-			
+			this.down_node.state_hex = "move_to_node";
+			this.down_node = false;			
 		}
 	}.bind(this));
 	
@@ -47,21 +48,29 @@ Mous.prototype.addEvent = function(){
 		if(this.down_node !== false){
 			var down_node = this.down_node;	
 			var mouse_x = e.pageX - e.target.offsetLeft;
-			var mouse_y = e.pageY - e.target.offsetTop;
+			var mouse_y = e.pageY - e.target.offsetTop;			
 			var hex = down_node.hex;
+			
 			//Изменение движения мышки			
 			var cange_x = mouse_x - this.pos_before_x;
-			var cange_y = mouse_y - this.pos_before_y;
-			
-			down_node.state_hex = "change";
-			
+			var cange_y = mouse_y - this.pos_before_y;				
+					
 			hex.pos.drow_point.x = hex.pos.drow_point.x + cange_x;
 			hex.pos.drow_point.y = hex.pos.drow_point.y + cange_y;
 			hex.pos.mid.x 		 = hex.pos.mid.x + cange_x;
-			hex.pos.mid.y        = hex.pos.mid.y + cange_y;
-			
+			hex.pos.mid.y        = hex.pos.mid.y + cange_y;		
+
+			this.down_node.state_hex = "change";			
 			this.pos_before_x = mouse_x;
-			this.pos_before_y = mouse_y;
+			this.pos_before_y = mouse_y;			
 		}
-	}.bind(this));
+	}.bind(this));	
+	
+	//Если мышка ушла из канваса
+	canvas.addEventListener('mouseout', function (e) {
+		if(this.down_node !== false){
+			this.down_node.state_hex = "move_to_node";
+			this.down_node = false;			
+		}
+	}.bind(this));	
 }
