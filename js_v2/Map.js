@@ -13,11 +13,17 @@ function Map(setting){
 	//По сути это узлы самых нижних гексагонов
 	this.nodes_last = new Array;
 	
+	//Расстояние до соседей
+	this.distance_to_neighbors = new Array;
+	
 	//Задаём форму карты
 	this.setFormMap('rectang');
 	
 	//Находим и задаём Id соседей
 	this.setNeighbors();
+	
+	//Находим дефолтные расстояния до соседей
+	this.setDistanceToNeighbors();
 	
 }
 
@@ -234,6 +240,25 @@ Map.prototype.setNeighbors = function (){
 		});
 	});
 }
+
+//Находим дефолтные расстояния до соседей
+Map.prototype.setDistanceToNeighbors = function(){
+	
+	//Размер гексагона
+	var hex_size_x  = this._setting.hex.size.x;
+	var hex_size_y  = this._setting.hex.size.y;
+	
+	var left_right_sides = MyMath.getDistanceBetweenTwoPoints(0,0,(3/4)*hex_size_x,hex_size_y/2);
+	
+	//Расстояние до соседей
+	this.distance_to_neighbors.push(hex_size_y);
+	this.distance_to_neighbors.push(left_right_sides);
+	this.distance_to_neighbors.push(left_right_sides);	
+	this.distance_to_neighbors.push(hex_size_y);
+	this.distance_to_neighbors.push(left_right_sides);
+	this.distance_to_neighbors.push(left_right_sides);
+	
+};
 
 //Узел 
 function Node(id, x, y, mid_x, mid_y){

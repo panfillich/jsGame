@@ -27,29 +27,5 @@ var MyMath = {
 		}
 		
 		return {'x':new_pos_x,'y':new_pos_y};
-		
-		//Находим A,B,C линейного уравнения Ax+By+C=0
-		/*var A = Yp - Yh;
-		var B = Xh - Xp;
-		var C = Xp*Yh - Xh*Yp;
-		
-		//Находим Y через sin
-		var G = MyMath.getDistanceBetweenTwoPoints(Xh,Yh,Xp,Yp);//Гипотенуза	
-		var Sin = Math.abs(Yp - Yh)/G;
-		
-		//Смещение в пикселях
-		var Ys,Xs;
-		var Ys1 =  Sin*S + Yh;
-		var Ys2 = -Sin*S + Yh;
-		
-		if((Ys1 <= Yh && Ys1 >= Yp) || (Ys1 >= Yh && Ys1 <= Yp)){
-			Ys = Ys1;
-		} else {
-			Ys = Ys2;
-		}
-		
-		Xs = -(B*Ys+C)/A;
-		
-		return {'x':Xs,'y':Xs};*/
 	}
 }
