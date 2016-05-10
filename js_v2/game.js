@@ -25,7 +25,7 @@
 		//Формируем логику работы карты
 		this.logic	= new Logic(setting, map);	
 		//Формируем логику работы с мышью
-		new	Mous(setting, map);
+		new	Mous(setting, map,this.logic);
 		
 		//Массив всех игр
 		games.push(this);

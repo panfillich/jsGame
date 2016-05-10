@@ -8,14 +8,14 @@ function Setting(id_game,id_rezult,id_setting){
 	this.log = true;
 	
 	//Кол-во n в ряде
-	this.count_n_row = 3;
+	this.count_n_row = 5;
 	
 	//Карта	
 	this.map = { 	
 		//Хранилище карты с логикой
 		'store' : {},
 		//Размеры 
-		'size' : {'x' : 300,'y' : 300}
+		'size' : {'x' : 2400,'y' : 1200}
 	};		
 	
 	//Гексагоны	
@@ -23,7 +23,7 @@ function Setting(id_game,id_rezult,id_setting){
 		//Размеры
 		'size' : {'x'  : 60,'y'  : 60},
 		//Скорость
-		'speed' : 11,
+		'speed' : 10,
 		//Скорость исчезания в частях по диагонали
 		'speed_drop' : 1/30
 	}	
