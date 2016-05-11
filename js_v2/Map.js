@@ -103,6 +103,7 @@ Map.prototype.setFormMap = function(type){
 	var border;					//граница, после которой происходит генерация
 	var rand;					//случайный множитель (для границы)
 	var node;					//узел
+	var node_gen				//узел-генератор
 	
 	switch (type) {
 		//----------------------------------------------------------------------------------//
@@ -121,19 +122,17 @@ Map.prototype.setFormMap = function(type){
 					last_y = y = hex_count_y-1;	
 				}	
 				
-				border = - 0.5 * hex_size_y;
-				pos_y  = border - hex_size_y *(1 + Math.random() * 2);
-				
+				//Параметры узла-генератора
+				border 		= - 0.5 * hex_size_y;
+				pos_y  		= border;
 				pos_x 		= (3/4)*x*hex_size_x;
 				pos_mid_x 	= pos_x + hex_size_x/2;
-				pos_mid_y 	= pos_y + hex_size_y/2;
-				
+				pos_mid_y 	= pos_y + hex_size_y/2;				
 				
 				//Добавляем узел генерации конкретного столбца
-				nodes_gen.push(
-					new GenNode(id_gen, pos_x, pos_y, pos_mid_x, pos_mid_y, border)
-				); 
-				
+				node_gen = new GenNode(id_gen, pos_x, pos_y, pos_mid_x, pos_mid_y, border);
+				node_gen.newRandPosY();
+				nodes_gen.push(node_gen);
 				
 				do{ 
 					pos_x = x * 3*(hex_size_x/4);
@@ -149,7 +148,7 @@ Map.prototype.setFormMap = function(type){
 				
 					
 					//Добавляем узел					
-					node = new UsualNode(id, pos_x, pos_y, pos_mid_x, pos_mid_y, id_gen);
+					node = new UsualNode(id, pos_x, pos_y, pos_mid_x, pos_mid_y, node_gen);
 					nodes.push(node); 
 					
 					//Добавляем последний узелж
@@ -279,11 +278,11 @@ function Node(id, x, y, mid_x, mid_y){
 }
 
 //Обычный узел на карте
-function UsualNode(id, x, y, mid_x, mid_y, id_gen){
+function UsualNode(id, x, y, mid_x, mid_y, node_gen){
 	Node.apply(this, arguments);	
 	
-	//id генератора для данного узла
-	this.id_gen = id_gen;
+	//Ссылка на генератор
+	this.node_gen = node_gen;
 	
 	//Соседние гексагоны
 	//Обход по часовой стрелке с 00:00
@@ -321,3 +320,11 @@ function GenNode(id, x, y, mid_x, mid_y, border){
 	//Граница, после прохождения которой генерируется новый гексагон
 	this.border = border;
 }
+//Формируем новую позицию генератора
+GenNode.prototype.newRandPosY = function(){
+	var distance 		  = 2*(this.pos.mid.y - this.pos.drow_point.y);
+	this.pos.drow_point.y = this.border - distance *(1 + Math.random() * 2);		
+	this.pos.mid.y 		  = this.pos.drow_point.y + 0.5 * distance;
+}
+
+

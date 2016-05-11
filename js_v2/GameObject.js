@@ -27,11 +27,46 @@ function GameObject(property){
 
 }//------------------------------------------------//
 
+//Установить новые координаты отрисовки
+GameObject.prototype.setDrowPos = function(drow_point_x,drow_point_y){
+	//Координаты для отрисовки
+	this.pos.drow_point.x = drow_point_x;
+	this.pos.drow_point.y = drow_point_y;
+	
+	//Координаты центра
+	this.pos.mid.x = drow_point_x + this.size.x/2;
+	this.pos.mid.y = drow_point_y + this.size.y/2;
+}
+
+//Установить новые координаты центра
+GameObject.prototype.setMidPos = function(mid_point_x,mid_point_y){
+	//Координаты для отрисовки
+	this.pos.drow_point.x = mid_point_x - this.size.x/2;
+	this.pos.drow_point.y = mid_point_y - this.size.y/2;
+	
+	//Координаты центра
+	this.pos.mid.x = mid_point_x;
+	this.pos.mid.y = mid_point_y;
+}
+
+//Установить новый размер
+GameObject.prototype.setNewSize = function(new_size_x, new_size_y){
+	//Координаты для отрисовки
+	this.pos.drow_point.x = this.pos.mid.x - new_size_x/2;
+	this.pos.drow_point.y = this.pos.mid.y - new_size_y/2;
+	
+	//Размеры
+	this.size.x = new_size_x;
+	this.size.y	= new_size_y;
+}
+
 //Наследуем от GameObject
 //добавляем тип гесагона
 function Hex(property){
 	GameObject.apply(this,arguments);
-	
+		
 	//тип/цвет гексагона
 	this.type = property.type;
 }
+Hex.prototype = Object.create(GameObject.prototype);
+Hex.prototype.constructor = Hex;
