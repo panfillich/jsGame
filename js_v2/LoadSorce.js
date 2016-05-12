@@ -1,6 +1,8 @@
 //Зарузка изображений
-function Loading(id_game, setting){
-	console.log('Загрузка ресурсов для игры ' + id_game + '.');
+function Loading(setting){
+	if(setting.log){
+		console.log('Загрузка ресурсов для игры ' + setting.id_game + '.');
+	}
 	setting.image_store.forEach(function(image,i,image_store){
 		//image.name - внутреннее название изображения
 		//image.file_name - название файла картинки
@@ -8,12 +10,12 @@ function Loading(id_game, setting){
 		//i 		 - номер в массиве, он же id картинки
 		//folder	 - папка со всеми картинками
 		
-		image_store[i] = new LoadImage(image, i, setting.image_folder);
+		image_store[i] = new LoadImage(image, i, setting);
 	});
 }
 
 //Загрузка, контроль и сохранения 1-го изображения
-function LoadImage(image, id, folder){	
+function LoadImage(image, id, setting){	
 	//Загружена картинка или нет
 	this.loading = false;
 	
@@ -31,9 +33,11 @@ function LoadImage(image, id, folder){
 	
 	//Создаем картинку
 	this.img = new Image;
-	this.img.src = folder + '/' + this.folder + '/' + image.file_name;
+	this.img.src = setting.image_folder + '/' + this.folder + '/' + image.file_name;
 	this.img.onload = (function(){
-		console.log('Изображение "' + this.img.src + '" загружено.');
+		if(setting.log){
+			console.log('Изображение "' + this.img.src + '" загружено.');
+		}
 		this.loading = true;
 	}).bind(this);
 }

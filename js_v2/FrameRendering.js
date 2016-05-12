@@ -2,8 +2,7 @@
 var games = new Array();
 
 //Покадровая анимация
-(function FrameRendering(){
-	
+(function(){
 	function Rendering(){
 		
 		window.MyRequestAnimationFrame = (function (callback) {
