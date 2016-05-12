@@ -13,10 +13,12 @@ Onload.start_actions = function(){
 }
 
 //Действие после загрузки ресурсов, для каждой игры свой набор действий
-function Onload(id_game, next_action){
+function Onload(setting, next_action){
 	Onload.all_actions.push(
 		function(){
-			console.log('Ресурсы для игры ' + id_game + ' загружены.');
+			if(setting.log){
+				console.log('Ресурсы для игры ' + setting.id_game + ' загружены.' + setting.log);
+			}
 			next_action();
 		}
 	);

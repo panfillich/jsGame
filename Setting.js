@@ -2,17 +2,20 @@
 function Setting(setting){
 	//Устанавливаем настройки по умолчанию
 	this.def_setting = this.setDefSetting();
+	console.log(this.log);
 	
 	//Устанавливаем настройки по умолчанию
 	this.setSetting(this.def_setting);
+	console.log(this.log);
 	
 	//Устанавливаем обязательные настройки + меняем настройки по умолчанию
 	this.setSetting(setting);
+	console.log(this.log);
 	
 	//Id родительского класса, где генерируется canvas
 	//единственный обязательный параметр
 	if(setting.id_game == undefined){
-		console.log('ERROR :Не задано место(id), для генерации игры');
+		console.log('Не задано место(id), для генерации игры');
 	} 
 	
 	//Устанавливаем предрасчетные параметры и свойства
@@ -40,11 +43,11 @@ Setting.prototype.setDefSetting = function(){
 		//Гексагоны	
 		'hex' : { 
 			//Размеры
-			'size' : {'x' : 60, 'y' : 60},
+			'size' : {'x'  : 60,'y'  : 60},
 			//Скорость падения
 			'speed_move_down' : 10,
 			//Cкорость движения к узлу
-			'speed_move_to_node' : 5,
+			'speed_move_to_node' : 10,
 			//Скорость исчезания в частях по диагонали
 			'speed_drop' : 0.03125 // = 1/32
 		},	

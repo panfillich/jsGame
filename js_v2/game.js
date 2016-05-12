@@ -1,32 +1,15 @@
-﻿function Game(id_game){
+﻿function Game(setting){
 	//Глобальные настройки + там же хранилище обьектов (картинки, canvas, карта, с логикой)
-	this.setting = new Setting(id_game);
+	this.setting = new Setting(setting);
 	
 	//Загрузка ресурсов (картинок)
-	Loading(id_game, this.setting);
+	Loading(this.setting);
 	
 	//Действия после загрузки ресурсов
-	Onload(id_game, (function(){
-		var setting = this.setting;
-		//Создание canvas
-		CreateCanvas(setting);
+	Onload(this.setting, (function(){
 		
-		if(setting.grid.view){
-			//Создание координатной сети
-			CreateGrid(setting);
-			//Отрисовывание координатной сети
-			DrowGrid(setting);
-		}
-		
-		//Формируем карту 
-		this.map	= new Map(setting);
-		var	map		= this.map; 
-		
-		//Формируем логику работы карты
-		this.logic	= new Logic(setting, map);	
-		
-		//Формируем логику работы с мышью
-		new	Mous(setting, map,this.logic);
+		//Запускаем игру
+		this.start();
 		
 		//Массив всех игр
 		games.push(this);
@@ -37,5 +20,56 @@ Game.prototype.animation = function(){
 	this.logic.animation();
 }
 
-var game_1 = new Game('game_1');
-//var game_2 = new Game('game_2');
+Game.prototype.start = function(){
+	//Создание canvas
+	CreateCanvas(this.setting);
+		
+	//Показывать сетку?	
+	if(this.setting.grid.view){
+		//Создание координатной сети
+		CreateGrid(this.setting);
+		//Отрисовывание координатной сети
+		DrowGrid(this.setting);
+	}
+		
+	//Формируем карту 
+	this.map	= new Map(this.setting);
+			
+	//Формируем логику работы карты
+	this.logic	= new Logic(this.setting, this.map);	
+	
+	//Формируем логику работы с мышью
+	new	Mous(this.setting, this.map, this.logic);
+}
+
+//Начало новой игры
+Game.prototype.startNewGame = function(setting){
+	if(setting.id_game == undefined){
+		setting.id_game = this.setting.id_game;
+	}	
+	//Перепишем старые настройки
+	this.setting.setSetting(setting);
+	//Сформируем заново рассчитываемые параметры
+	this.setting.setPreSettlementOptions();
+	//Формируем карту/логику/события
+	this.start();
+}
+
+
+var setting_for_game_1 = {
+	'id_game':'game_1',
+	'map' : {
+		'size': {'x' : 200, 'y' : 200 }
+	}
+};
+
+
+var setting_for_game_2 = {
+	'id_game':'game_2',
+	'map' : {
+		'size': {'x' : 300, 'y' : 300 }
+	}
+};
+
+var game1 = new Game(setting_for_game_1);
+var game2 = new Game(setting_for_game_2);
