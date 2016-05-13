@@ -22,6 +22,7 @@ Game.prototype.animation = function(){
 
 Game.prototype.start = function(){
 	//Создание canvas
+	//canvas храним в настройках setting.canvas 
 	CreateCanvas(this.setting);
 		
 	//Показывать сетку?	
@@ -39,18 +40,17 @@ Game.prototype.start = function(){
 	this.logic	= new Logic(this.setting, this.map);	
 	
 	//Формируем логику работы с мышью
-	new	Mous(this.setting, this.map, this.logic);
+	new	Events(this.setting, this.map, this.logic);
 }
 
-//Начало новой игры
-Game.prototype.startNewGame = function(setting){
-	if(setting.id_game == undefined){
-		setting.id_game = this.setting.id_game;
+//Начало новой игры / перезагрузка предыдущей
+Game.prototype.restart = function(setting){
+	if(setting != undefined){
+		//Перепишем старые настройки
+		this.setting.setSetting(setting);
+		//Сформируем заново рассчитываемые параметры
+		this.setting.setPreSettlementOptions();
 	}	
-	//Перепишем старые настройки
-	this.setting.setSetting(setting);
-	//Сформируем заново рассчитываемые параметры
-	this.setting.setPreSettlementOptions();
 	//Формируем карту/логику/события
 	this.start();
 }
