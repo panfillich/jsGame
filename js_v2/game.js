@@ -9,7 +9,7 @@
 	Onload(this.setting, (function(){
 		
 		//Формируем окно настроек
-		CreateWinConfig(this.setting);
+		CreateWinConfig(this);
 		
 		//Запускаем игру
 		this.start();
@@ -63,7 +63,7 @@ var setting_for_game_1 = {
 	'id_game':'game_1',
 	'id_config':'id_config_1',
 	'map' : {
-		'size': {'x' : 1200, 'y' : 1200 }
+		'size': {'x' : 600, 'y' : 600 }
 	}
 };
 

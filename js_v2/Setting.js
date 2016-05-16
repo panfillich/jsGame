@@ -66,13 +66,10 @@ Setting.prototype.setDefSetting = function(){
 		//Папка со всеми картинками
 		'image_folder' : 'img',
 	
-		//Папка с картинками гексагонов
-		'hex_image_folder' : 'hex',
-		
-			//Хранилище картинок
+		//Хранилище картинок
 		'image_store' : [
 			{'name' 	 : 'blue',
-			 'type' 	 : 'hex',
+			 'type' 	 : 'hex', //Тип / папка
 			 'file_name' : 'blue.gif'},
 			 
 			{'name' 	 : 'red',
