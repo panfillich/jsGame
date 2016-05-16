@@ -5,6 +5,5 @@ function Game(id_game){
 }
 
 
-
 var game_1 = new Game('game1');
 //var game_2 = new Game('game2');

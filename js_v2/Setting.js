@@ -24,7 +24,7 @@ function Setting(setting){
 Setting.prototype.setDefSetting = function(){
 	return {
 		//Кол-во n в ряде
-		'count_n_row' : 3,
+		'count_n_row' : 5,
 		
 		//Глобальный коэфициент скорости игры
 		'speed' : 1,
@@ -34,7 +34,7 @@ Setting.prototype.setDefSetting = function(){
 
 		//Размеры карты
 		'map' : {
-			'size': {'x' : 500, 'y' : 500 }
+			'size': {'x' : 1500, 'y' : 1500 }
 		},
 		
 		//Гексагоны	

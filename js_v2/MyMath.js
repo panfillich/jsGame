@@ -28,4 +28,5 @@ var MyMath = {
 		
 		return {'x':new_pos_x,'y':new_pos_y};
 	}
+
 }

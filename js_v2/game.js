@@ -8,6 +8,9 @@
 	//Действия после загрузки ресурсов
 	Onload(this.setting, (function(){
 		
+		//Формируем окно настроек
+		CreateWinConfig(this.setting);
+		
 		//Запускаем игру
 		this.start();
 		
@@ -58,18 +61,13 @@ Game.prototype.restart = function(setting){
 
 var setting_for_game_1 = {
 	'id_game':'game_1',
+	'id_config':'id_config_1',
 	'map' : {
-		'size': {'x' : 200, 'y' : 200 }
+		'size': {'x' : 1200, 'y' : 1200 }
 	}
 };
 
 
-var setting_for_game_2 = {
-	'id_game':'game_2',
-	'map' : {
-		'size': {'x' : 300, 'y' : 300 }
-	}
-};
 
 var game1 = new Game(setting_for_game_1);
-var game2 = new Game(setting_for_game_2);
+//var game2 = new Game(setting_for_game_2);

@@ -7,56 +7,62 @@
 	<script type="text/javascript" src="js_v2/Setting.js"></script>
 	<script type="text/javascript" src="js_v2/LoadSorce.js"></script>
 	<script type="text/javascript" src="js_v2/Onload.js"></script>
-	<script type="text/javascript" src="js_v2/Canvas.js"></script>
-	
-	<script type="text/javascript" src="js_v2/Grid.js"></script>
-	
+	<script type="text/javascript" src="js_v2/Canvas.js"></script>	
+	<script type="text/javascript" src="js_v2/Grid.js"></script>	
 	<script type="text/javascript" src="js_v2/Map.js"></script>
 	<script type="text/javascript" src="js_v2/FrameRendering.js"></script>
 	<script type="text/javascript" src="js_v2/Images.js"></script>
 	<script type="text/javascript" src="js_v2/MyMath.js"></script>
 	<script type="text/javascript" src="js_v2/Logic.js"></script>
-	<script type="text/javascript" src="js_v2/Mous.js"></script>
-	
-	<script type="text/javascript" src="js_v2/GameObject.js"></script>
-	<!--script type="text/javascript" src="js_v2/Animation.js"></script-->
-	
-	
+	<script type="text/javascript" src="js_v2/Mous.js"></script>	
+	<script type="text/javascript" src="js_v2/GameObject.js"></script>	
+	<script type="text/javascript" src="js_v2/CreateWinConfig.js"></script>	
 	<script type="text/javascript" src="js_v2/Game.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 </head>
 <body>
 <div class="container">
 </div>
 <!-- Шапка сайта -->
 <header class="header media well">
-    <h1>Гексогональный 3 в ряд</h1>
+	
+		<form role="form" style = "display		: table;" >
+		
+
+ <div style="width:280px; float:left">
+  <label  style="height:30px; width:100px; text-align:right;" for="email">Размер карты</label>
+  <input type="email" class="input-sm" id="email" size="3" > x
+  <input type="email" class="input-sm" id="email" size="3" >
+ </div width="100px">
+ 
+ <div width="100px" style="float:left; 	display	: table-cell; vertical-align : middle;">
+ <label  style="height:30px; width:100px; text-align:right;" for="email">Глобальная скорость</label>
+ <input  style="" type="email" class="input-sm" id="email" size="17" >
+ </div> 
+
+<div align="center" style="width:100%; align:center; float:left">
+ <button type="submit" class="btn btn-success">Войти</button>
+ </div>
+</form>
+	
 </header>
 
 <main role="main">
-    <div id="setting">
-        <h2>Настройки:</h2>
-    </div>
+	<div class="container">
 
-    <div id="game_1">
-        <h2>Игра 1 :</h2>
-        <div name = "windows-game" id="windows-game"></div>
-    </div>
-	
-	
-    <div id="game_2">
-        <h2>Игра 1 :</h2>
-        <div name = "windows-game" id="windows-game"></div>
-    </div>
 
-    <div id="rules">
-        <h2>Описание и правила:</h2>
-    </div>
+			
+			<div id="game_1">
 
+			</div>
+
+
+	</div>
 </main>
 
 <footer>
     <div>
-       Спасибо!
+       Вольмите меня на работу)
     </div>
 </footer>
 </body>
