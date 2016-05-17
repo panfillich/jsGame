@@ -174,8 +174,6 @@ Map.prototype.searchNeighbor = function(mid_x, mid_y){
 	var hex_size_x 	 = this._setting.hex.size.x;
 	var hex_size_y	 = this._setting.hex.size.y;
 	
-	var id = 0; //Признак отсутствия соседа
-	
 	//Определяем границы
 	var border_x_max = mid_x + hex_size_x/2; 
 	var border_x_min = mid_x - hex_size_x/2; 

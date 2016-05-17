@@ -56,11 +56,13 @@ function CreateWinConfig(game){
 				<button type="submit" class="btn btn-success" style="align:center;">Пауза в игре</button>
 			</div>*/
 			//Контейнер для кнопок
-			var div_button = document.createElement('div');;
+			var div_button = document.createElement('div');
 			div_button.style.align = 'center';
 			
 			//Кнопка рестарта игры
-			var button_rest;
+			createButton('Рестарт игры', function(){				
+				game.restart(getSetting());
+			});
 			win_config.appendChild(div_button);
 			
 			
@@ -68,6 +70,15 @@ function CreateWinConfig(game){
 		} else {
 			console.log('Error: не найден ID родителя (setting.id_config), для рисования меню настроек');	
 		}		
+	}
+	
+	//Создаем кнопку
+	function createButton(title, action){
+		var button = document.createElement('button');
+		button.setAttribute('class', 'btn btn-success');
+		button.onclick = action;
+		button.textContent = title;
+		div_button.appendChild(button);
 	}
 	
 	//Создаем обертку элемента формы
@@ -194,31 +205,31 @@ function CreateWinConfig(game){
 	
 	//Получить настройки
 	function getSetting(){		
-		console.dir( {
+		return {
 			//Кол-во n в ряде
-			'count_n_row' : form.count_n_row.value,
+			'count_n_row' : Number(form.count_n_row.value),
 			
 			//Глобальный коэфициент скорости игры
-			'speed' : form.speed.value,
+			'speed' : Number(form.speed.value),
 
 			//Размеры карты
 			'map' : {
-				'size': {'x' : form.map_size_x.value, 
-						 'y' : form.map_size_y.value }
+				'size': {'x' : Number(form.map_size_x.value), 
+						 'y' : Number(form.map_size_y.value) }
 			},
 			
 			//Гексагоны	
 			'hex' : { 
 				//Размеры
-				'size' : {	'x' : form.hex_size.value, 
-							'y' : form.hex_size.value},
+				'size' : {	'x' : Number(form.hex_size.value), 
+							'y' : Number(form.hex_size.value)},
 				//Скорость падения
-				'speed_move_down' : form.hex_speed_move_down.value,
+				'speed_move_down' : Number(form.hex_speed_move_down.value),
 				//Cкорость движения к узлу
-				'speed_move_to_node' : form.hex_speed_move_to_node.value,
+				'speed_move_to_node' : Number(form.hex_speed_move_to_node.value),
 				//Скорость исчезания в частях по диагонали
-				'speed_drop' : form.hex_speed_drop.value 
+				'speed_drop' : Number(form.hex_speed_drop.value) 
 			}	
-		});
+		};
 	}
 }

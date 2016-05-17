@@ -24,7 +24,7 @@ function Setting(setting){
 Setting.prototype.setDefSetting = function(){
 	return {
 		//Кол-во n в ряде
-		'count_n_row' : 5,
+		'count_n_row' : 3,
 		
 		//Глобальный коэфициент скорости игры
 		'speed' : 1,

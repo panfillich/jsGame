@@ -54,6 +54,7 @@ Game.prototype.restart = function(setting){
 		//Сформируем заново рассчитываемые параметры
 		this.setting.setPreSettlementOptions();
 	}	
+	
 	//Формируем карту/логику/события
 	this.start();
 }
