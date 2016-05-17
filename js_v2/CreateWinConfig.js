@@ -10,75 +10,70 @@ function CreateWinConfig(game){
 		
 		if(win_config != undefined){
 
-			//Создаем форму
-			var form = document.createElement('form');
-			form.setAttribute('id', 'conf_'+ setting.id_game);
-			form.setAttribute('role', 'form');
-			form.style.align = 'center';
+			//Cоздаем форму, эта форма через замыкания передается всем внутренним ф-ям
+			var form = createForm();
 			win_config.appendChild(form);
 			
+			//Создаем пустые элмементы формы
+			createElementsForm();
 			
-			createElem({'tl':'Кол-во n в ряде', 	
-						'v1':setting.count_n_row, 'n1':'count_n_row', 
-						'min':1});
-						
-			createElem({'tl':'Размеры карты', 		
-						'v1':setting.map.size.x, 'n1':'map_size_x', 
-						'v2':setting.map.size.y, 'n2':'map_size_y', 
-						'min':1, 'max' : 3000});	
-						
-			createElem({'tl':'Размеры гексагона', 	
-						'v1':setting.hex.size.x, 'n1' : 'hex_size',
-						'min':1, 'max' : 1000});	
+			//Заполняем элмементы формы
+			setSetting(setting);
 			
-			createElem({'tl':'Глобальная скорость', 
-						'v1':setting.speed, 'n1' : 'speed',
-						'min':0, 'max' : 1000});
-						
-			createElem({'tl':'Скорость падения', 	
-						'v1':setting.hex.speed_move_down, 'n1' : 'hex_speed_move_down',	
-						'min':0, 'max' : 1000});
-						
-			createElem({'tl':'Cкорость к узлу', 	
-						'v1':setting.hex.speed_move_to_node, 'n1' : 'hex_speed_move_to_node',	
-						'min':0, 'max' : 1000});
-						
-			createElem({'tl':'Скорость исчезания', 	
-						'v1':setting.hex.speed_drop, 'n1' : 'hex_speed_drop',	
-						'min':0.001, 'max' : 1});
-			
-			
-			//Cоздаем кнопки
-			/*	
-			<div align="center" style="width:100%; align:center; float:left">
-				<button type="submit" class="btn btn-success" style="align:center;">Сброс настроек</button>
-				<button type="submit" class="btn btn-success" style="align:center;">Рестарт игры</button>
-				<button type="submit" class="btn btn-success" style="align:center;">Пауза в игре</button>
-			</div>*/
-			//Контейнер для кнопок
-			var div_button = document.createElement('div');
-			div_button.style.align = 'center';
-			
-			//Кнопка рестарта игры
-			createButton('Рестарт игры', function(){				
-				game.restart(getSetting());
-			});
-			win_config.appendChild(div_button);
-			
-			
-			var new_setting = getSetting();
+			//Cоздаем кнопки (win_config передаем через замыкания)
+			createButtons();
+
 		} else {
 			console.log('Error: не найден ID родителя (setting.id_config), для рисования меню настроек');	
 		}		
 	}
-	
-	//Создаем кнопку
-	function createButton(title, action){
-		var button = document.createElement('button');
-		button.setAttribute('class', 'btn btn-success');
-		button.onclick = action;
-		button.textContent = title;
-		div_button.appendChild(button);
+	//Создаем панель кнопок
+	function createButtons(){
+		//Контейнер для кнопок
+		var div_button = document.createElement('div');
+		div_button.style.textAlign = 'center';
+		div_button.style.width = '100%';
+		div_button.style.float = 'left';
+		
+		//Сброс настроек
+		createButton('Сбросить настройки', function(){				
+			setSetting(setting);
+		});
+		
+		//Кнопка рестарта игры
+		var rest = createButton('Рестарт игры', function(){	
+			pause.textContent = 'Пауза';
+			game.restart(getSetting());
+		});
+		
+		//Пауза
+		var pause = createButton('Пауза', function(button){			
+			if(button.textContent === 'Пауза'){
+				game.setting.last_speed = game.setting.speed;
+				game.setting.speed = 0;
+				button.textContent = 'Старт';
+			} else {
+				game.setting.speed = game.setting.last_speed;
+				button.textContent = 'Пауза';
+			}				
+		});
+		
+		//Помещаем контейнер с кнопками в основное поле настроек
+		form.appendChild(div_button);
+		
+		//Создаем кнопку
+		function createButton(title, action){
+			var button = document.createElement('button');
+			button.setAttribute('class', 'btn btn-success');
+			button.style.margin = '5px'
+			button.onclick = function(){
+				action(button);
+				return false;
+			};
+			button.textContent = title;
+			div_button.appendChild(button);
+			return button;
+		}
 	}
 	
 	//Создаем обертку элемента формы
@@ -119,38 +114,35 @@ function CreateWinConfig(game){
 	}
 	
 	//Cоздаем Input
-	function createInput(value, name, size, min, max){
+	function createInput(name, size, min, max){
 		var input = document.createElement( 'input' );		
-		input.value = value;
 		input.name 	= name;
 		input.setAttribute('size',size);
 		//Т.к. адекватная поддержка классов начинается с IE10, а игра должна запускаться на IE 9+
 		input.setAttribute('class','input-sm');
 		
+		//Валидация
 		var checker	= function(){return true;};
 		if(min != undefined && max != undefined){
 			checker = function(){				
-				return (input.value <= max && input.value >= min);
+				if (input.value > max || input.value < min){
+					input.value = (max + min)/2
+				};
 			}
 		} else if(min != undefined && max == undefined){
 			checker = function(){				
-				return (input.value >= min);
+				if (input.value < min){
+					input.value = min;
+				}
 			}
 		} else if(min == undefined && max != undefined){
 			checker = function(){				
-				return (input.value <= max);
+				if (input.value > max){
+					input.value = max;
+				}
 			}		
 		}
-		
-		input.onchange = function(){
-			if(checker()){
-				input.style.color 		= 'black';
-				input.style.background 	= 'white';
-			} else {
-				input.style.color 		= 'white';
-				input.style.background 	= 'red';
-			};
-		}		
+		input.onchange = checker;
 		
 		return input;	
 	}
@@ -159,8 +151,6 @@ function CreateWinConfig(game){
 	function createElem(prop){
 		//Передаваемые параметры
 		var text_label 		= prop.tl;
-		var value_first 	= prop.v1;
-		var value_second 	= prop.v2;
 		var	name_first		= prop.n1;
 		var	name_second		= prop.n2;
 		var valid_min		= prop.min;
@@ -177,14 +167,14 @@ function CreateWinConfig(game){
 		form_elem_part = createFormElemPart();
 		
 		var size = 17; //размер инпута
-		if(value_second != undefined){
+		if(name_second != undefined){
 			size = 3;
 		}
 		
-		form_elem_part.appendChild(createInput(value_first, name_first, size, valid_min, valid_max));		
-		if(value_second != undefined){
+		form_elem_part.appendChild(createInput(name_first, size, valid_min, valid_max));		
+		if(name_second != undefined){
 			form_elem_part.appendChild(createSpan(' x '));		
-			form_elem_part.appendChild(createInput(value_second, name_second, size, valid_min, valid_max));		
+			form_elem_part.appendChild(createInput(name_second, size, valid_min, valid_max));		
 		}
 		
 		var valid = '';
@@ -231,5 +221,37 @@ function CreateWinConfig(game){
 				'speed_drop' : Number(form.hex_speed_drop.value) 
 			}	
 		};
+	}
+	
+	//Установить настройки по умолчанию
+	function setSetting(setting){		
+		form.count_n_row.value 	=	setting.count_n_row;	//Кол-во n в ряде
+		form.speed.value		=	setting.speed;			//Глобальный коэфициент скорости игры
+		form.map_size_x.value	=	setting.map.size.x;		//Размеры карты
+		form.map_size_y.value	=	setting.map.size.y;
+		form.hex_size.value		=	setting.hex.size.x;		//Размеры гексагона
+		form.hex_speed_move_down.value		=	setting.hex.speed_move_down;	//Скорость падения
+		form.hex_speed_move_to_node.value	=	setting.hex.speed_move_to_node;	//Cкорость движения к узлу
+		form.hex_speed_drop.value			= 	setting.hex.speed_drop;			//Скорость исчезания в частях по диагонали
+	}
+	
+	//Создать форму  - пустышку
+	function createForm(){
+		var form = document.createElement('form');
+		form.setAttribute('id', 'conf_'+ setting.id_game);
+		form.setAttribute('role', 'form');
+		form.style.align = 'center';
+		return form;
+	}
+
+	//Создаем пустые элементы формы
+	function createElementsForm(){
+		createElem({'tl':'Кол-во n в ряде', 	'n1' : 'count_n_row', 	'min':1});
+		createElem({'tl':'Размеры карты',		'n1' : 'map_size_x', 	'n2':'map_size_y', 'min':1, 'max' : 3000});
+		createElem({'tl':'Размеры гексагона', 	'n1' : 'hex_size', 		'min':1, 'max' : 1000});
+		createElem({'tl':'Глобальная скорость', 'n1' : 'speed', 	'min':0, 'max' : 1000});
+		createElem({'tl':'Скорость падения', 	'n1' : 'hex_speed_move_down', 'min':0, 'max' : 1000});
+		createElem({'tl':'Cкорость к узлу',		'n1' : 'hex_speed_move_to_node', 'min':0, 'max' : 1000});
+		createElem({'tl':'Скорость исчезания', 	'n1' : 'hex_speed_drop', 'min':0.001, 'max' : 1});
 	}
 }
