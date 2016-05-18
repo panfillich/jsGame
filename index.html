@@ -17,7 +17,9 @@
 	<script type="text/javascript" src="js_v2/Mous.js"></script>	
 	<script type="text/javascript" src="js_v2/GameObject.js"></script>	
 	<script type="text/javascript" src="js_v2/CreateWinConfig.js"></script>	
-	<script type="text/javascript" src="js_v2/Game.js"></script>
+	<script type="text/javascript" src="js_v2/Points.js"></script>	
+	<script type="text/javascript" src="js_v2/Game.js"></script>	
+
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 </head>
 <body>
@@ -25,27 +27,32 @@
 </div>
 <!-- Шапка сайта -->
 <header class="header media well" >
-	<div id="id_config_1">
-	</div>
-
-
-	
-	</form>
+	<div id="conf_1"></div>
 </header>
 
 <main role="main">
 	<div class="container">
-			
-			<div id="game_1">
-
-			</div>
+		<!-- Окно с очками -->	
+		<h2>Очки : <span id="point_1">0</span></h2>
+		<!-- Окно с игрой -->	
+		<div id="game_1"></div>
 	</div>
 </main>
 
 <footer>
     <div>
-       Вольмите меня на работу)
+		Нужно срочно брать на работу!
     </div>
 </footer>
 </body>
 </html>
+
+<script>
+	var setting = {
+		'id_game'	:'game_1',	//id тега, куда помещаем canvas !обязательный параметр
+		'id_config'	:'conf_1',	//id тега, куда помещаем меню настроек
+		'id_points'	:'point_1'	//id тега, куда помещаем очки
+	}
+	new Game(setting);
+</script>
+

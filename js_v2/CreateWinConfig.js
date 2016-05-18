@@ -36,8 +36,8 @@ function CreateWinConfig(game){
 		div_button.style.float = 'left';
 		
 		//Сброс настроек
-		createButton('Сбросить настройки', function(){				
-			setSetting(setting);
+		createButton('Сбросить настройки', function(){
+			setSetting(setting.getDefSetting());
 		});
 		
 		//Кнопка рестарта игры
@@ -47,6 +47,7 @@ function CreateWinConfig(game){
 		});
 		
 		//Пауза
+		game.setting.last_speed = game.setting.speed;
 		var pause = createButton('Пауза', function(button){			
 			if(button.textContent === 'Пауза'){
 				game.setting.last_speed = game.setting.speed;
@@ -79,7 +80,7 @@ function CreateWinConfig(game){
 	//Создаем обертку элемента формы
 	function createFormElem(){
 		var form_elem = document.createElement( 'div' );
-		form_elem.style.width		 = '262px';
+		form_elem.style.width		 = '190px';
 		form_elem.style.display 	 = 'table';
 		form_elem.style.height  	 = '65px';
 		form_elem.style.float   	 = 'left';
@@ -100,7 +101,7 @@ function CreateWinConfig(game){
 		var label = document.createElement( 'label' );
 		label.style.textAlign 		= 'right';
 		label.style.float 	  		= 'right';
-		label.style.width 	  		= '110px';
+		label.style.width 	  		= '84px';
 		label.style.paddingRight	= '10px';	
 		label.textContent     		= text;
 		return label;
@@ -118,8 +119,10 @@ function CreateWinConfig(game){
 		var input = document.createElement( 'input' );		
 		input.name 	= name;
 		input.setAttribute('size',size);
-		//Т.к. адекватная поддержка классов начинается с IE10, а игра должна запускаться на IE 9+
-		input.setAttribute('class','input-sm');
+		//Т.к. адекватная поддержка классов начинается с IE10, 
+		// 	а игра должна запускаться на IE 9+
+		// 	и мы не можем пользоваться jquery
+		//input.setAttribute('class','input-sm');
 		
 		//Валидация
 		var checker	= function(){return true;};
@@ -150,11 +153,9 @@ function CreateWinConfig(game){
 	//Cоздаем элемент //работает через замыкания form берем из окружения
 	function createElem(prop){
 		//Передаваемые параметры
-		var text_label 		= prop.tl;
-		var	name_first		= prop.n1;
-		var	name_second		= prop.n2;
-		var valid_min		= prop.min;
-		var valid_max		= prop.max;		
+		var text_label 		= prop.label;
+		var	name			= prop.name;
+		var type			= prop.type;
 		
 		var form_elem = createFormElem();
 		
@@ -162,32 +163,50 @@ function CreateWinConfig(game){
 		var form_elem_part = createFormElemPart();
 		form_elem_part.appendChild(createLabel(text_label));		
 		form_elem.appendChild(form_elem_part);
-		
-		//Инпут + Подсказка по валидации	
 		form_elem_part = createFormElemPart();
-		
-		var size = 17; //размер инпута
-		if(name_second != undefined){
-			size = 3;
-		}
-		
-		form_elem_part.appendChild(createInput(name_first, size, valid_min, valid_max));		
-		if(name_second != undefined){
-			form_elem_part.appendChild(createSpan(' x '));		
-			form_elem_part.appendChild(createInput(name_second, size, valid_min, valid_max));		
-		}
-		
-		var valid = '';
-		if(valid_min != undefined){
-			valid += ' от ' + valid_min + ' ';
-		}
-		
-		if(valid_max != undefined){
-			valid += ' до ' + valid_max + ' ';
-		}
-		
-		if(valid != null){
-			form_elem_part.appendChild(createSpan('(' + valid + ')'));
+	
+		switch(type){
+			//Инпут
+			case 'input':
+				var size = 9//размер инпута
+				var name_first 	= name[0];
+				var name_second = name[1];
+				var valid_min	= prop.min;
+				var valid_max	= prop.max;
+				if(name_second != undefined){
+					size = 1;
+				}				
+				form_elem_part.appendChild(createInput(name_first, size, valid_min, valid_max));		
+				if(name_second != undefined){
+					form_elem_part.appendChild(createSpan(' x '));		
+					form_elem_part.appendChild(createInput(name_second, size, valid_min, valid_max));		
+				}
+				
+				//Подсказка по валидации	
+				var valid = '';
+				if(valid_min != undefined){
+					valid += 'от ' + valid_min;
+				}
+				
+				if(valid_max != undefined){
+					if(valid_min != undefined){
+						valid += ' ';
+					}
+					valid += 'до ' + valid_max;
+				}
+				
+				if(valid != ''){
+					form_elem_part.appendChild(createSpan(valid));
+				}
+			break;
+			//Select
+			case 'select':
+				var select = document.createElement( 'select' );		
+				select.name 	= name;		
+				select.setAttribute('size',3);
+				select.style.width = '94px';
+				prop.create(select);
+				form_elem_part.appendChild(select);
 		}
 		form_elem.appendChild(form_elem_part);
 		form.appendChild(form_elem);
@@ -219,12 +238,16 @@ function CreateWinConfig(game){
 				'speed_move_to_node' : Number(form.hex_speed_move_to_node.value),
 				//Скорость исчезания в частях по диагонали
 				'speed_drop' : Number(form.hex_speed_drop.value) 
-			}	
+			},	
+			
+			//Максимальное число различных гексагонов
+			'max_hex' :  Number(form.max_hex.value) 
 		};
 	}
 	
 	//Установить настройки по умолчанию
 	function setSetting(setting){		
+		//Input
 		form.count_n_row.value 	=	setting.count_n_row;	//Кол-во n в ряде
 		form.speed.value		=	setting.speed;			//Глобальный коэфициент скорости игры
 		form.map_size_x.value	=	setting.map.size.x;		//Размеры карты
@@ -233,6 +256,8 @@ function CreateWinConfig(game){
 		form.hex_speed_move_down.value		=	setting.hex.speed_move_down;	//Скорость падения
 		form.hex_speed_move_to_node.value	=	setting.hex.speed_move_to_node;	//Cкорость движения к узлу
 		form.hex_speed_drop.value			= 	setting.hex.speed_drop;			//Скорость исчезания в частях по диагонали
+		
+		form.max_hex.options[(setting.max_hex - 1)].selected = true; //Число различных гексагонов
 	}
 	
 	//Создать форму  - пустышку
@@ -244,14 +269,66 @@ function CreateWinConfig(game){
 		return form;
 	}
 
-	//Создаем пустые элементы формы
+	//Создаем элементы форм без выбраных/установленых значений
 	function createElementsForm(){
-		createElem({'tl':'Кол-во n в ряде', 	'n1' : 'count_n_row', 	'min':1});
-		createElem({'tl':'Размеры карты',		'n1' : 'map_size_x', 	'n2':'map_size_y', 'min':1, 'max' : 3000});
-		createElem({'tl':'Размеры гексагона', 	'n1' : 'hex_size', 		'min':1, 'max' : 1000});
-		createElem({'tl':'Глобальная скорость', 'n1' : 'speed', 	'min':0, 'max' : 1000});
-		createElem({'tl':'Скорость падения', 	'n1' : 'hex_speed_move_down', 'min':0, 'max' : 1000});
-		createElem({'tl':'Cкорость к узлу',		'n1' : 'hex_speed_move_to_node', 'min':0, 'max' : 1000});
-		createElem({'tl':'Скорость исчезания', 	'n1' : 'hex_speed_drop', 'min':0.001, 'max' : 1});
+		createElem({
+			'label'	:'Кол-во n в ряде', 	
+			'type'	:'input',	
+			'name'	:['count_n_row'], 
+			'min'	:1
+		});
+		createElem({
+			'label'	:'Размеры карты',		
+			'type'	:'input',	
+			'name' 	:['map_size_x', 'map_size_y'], 
+			'min'	:1,
+			'max' 	:3000
+		});
+		createElem({
+			'label'	:'Число различных гексагонов', 	
+			'type'	:'select',
+			'name' 	:'max_hex',
+			'create':function(select){
+				for(var i = 1; i <= setting.image_store.length; i++){ 
+					var option = new Option(i, i);
+					select.appendChild(option);
+				}
+			}
+		});
+		createElem({
+			'label'	:'Размеры гексагона',
+			'type'	:'input',
+			'name' 	:['hex_size'],
+			'min'	:1, 
+			'max' 	:1000
+		});
+		createElem({
+			'label'	:'Глобальная скорость', 
+			'type'	:'input',	
+			'name' 	:['speed'], 	
+			'min'	:0, 
+			'max' 	:1000
+		});
+		createElem({
+			'label'	:'Скорость падения',
+			'type'	:'input',	
+			'name' 	:['hex_speed_move_down'],
+			'min'	:0, 
+			'max' 	:1000
+		});
+		createElem({
+			'label'	:'Cкорость к узлу',
+			'type'	:'input',
+			'name' 	:['hex_speed_move_to_node'],
+			'min'	:0, 
+			'max' 	:1000
+		});
+		createElem({
+			'label'	:'Скорость исчезания',
+			'type'	:'input',
+			'name' 	:['hex_speed_drop'],
+			'min'	:0.001,
+			'max' 	:1
+		});		
 	}
 }

@@ -1,7 +1,7 @@
 ;//Глобальные настройки
 function Setting(setting){
 	//Устанавливаем настройки по умолчанию
-	this.def_setting = this.setDefSetting();
+	this.def_setting = this.getDefSetting();
 	
 	//Устанавливаем настройки по умолчанию
 	this.setSetting(this.def_setting);
@@ -21,7 +21,7 @@ function Setting(setting){
 }//-------------------------------------------------//
 
 //Устанавливаем настройки по умолчанию
-Setting.prototype.setDefSetting = function(){
+Setting.prototype.getDefSetting = function(){
 	return {
 		//Кол-во n в ряде
 		'count_n_row' : 3,
@@ -34,7 +34,7 @@ Setting.prototype.setDefSetting = function(){
 
 		//Размеры карты
 		'map' : {
-			'size': {'x' : 1500, 'y' : 1500 }
+			'size': {'x' : 600, 'y' : 300 }
 		},
 		
 		//Гексагоны	
@@ -91,7 +91,10 @@ Setting.prototype.setDefSetting = function(){
 			{'name' 	 : 'dark_blue',
 			 'type' 	 : 'hex',
 			 'file_name' : 'dark_blue.gif'}
-		]
+		],
+		
+		//Кол-во различных гексагонов
+		'max_hex' : 6
 	}
 }
 

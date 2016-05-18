@@ -44,6 +44,9 @@ Game.prototype.start = function(){
 	
 	//Формируем логику работы с мышью
 	new	Events(this.setting, this.map, this.logic);
+	
+	//Работа с очками (логика + создание окна, если нужно)
+	Points(this.setting, this.logic)
 }
 
 //Начало новой игры / перезагрузка предыдущей
@@ -58,17 +61,3 @@ Game.prototype.restart = function(setting){
 	//Формируем карту/логику/события
 	this.start();
 }
-
-
-var setting_for_game_1 = {
-	'id_game':'game_1',
-	'id_config':'id_config_1',
-	'map' : {
-		'size': {'x' : 600, 'y' : 600 }
-	}
-};
-
-
-
-var game1 = new Game(setting_for_game_1);
-//var game2 = new Game(setting_for_game_2);
